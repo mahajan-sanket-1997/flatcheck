@@ -1,0 +1,42 @@
+name: Build FlatCheck APK
+
+on:
+  push:
+    branches: [ main ]
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          channel: stable
+          cache: true
+
+      - name: Create Android project
+        run: flutter create --project-name app --org com.flatcheck --platforms android build_project
+
+      - name: Copy FlatCheck source
+        run: |
+          cp pubspec.yaml build_project/pubspec.yaml
+          rm -rf build_project/lib
+          cp -r lib build_project/lib
+          sed -i 's/android:label="app"/android:label="FlatCheck"/' build_project/android/app/src/main/AndroidManifest.xml
+
+      - name: Build release APK
+        working-directory: build_project
+        run: |
+          flutter pub get
+          flutter build apk --release
+
+      - name: Upload APK
+        uses: actions/upload-artifact@v4
+        with:
+          name: flatcheck-apk
+          path: build_project/build/app/outputs/flutter-apk/app-release.apk
+          retention-days: 14
