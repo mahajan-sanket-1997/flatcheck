@@ -44,8 +44,8 @@ class _CalculatorPageState extends State<CalculatorPage> {
     final stampAmt = agreement * n(stamp) / 100;
     final total = agreement + n(parking) + gstAmt + stampAmt + n(registration) + n(other);
     final area = n(carpet);
-    final perSqft = area > 0 ? total / area : 0;
-    final extras = agreement > 0 ? (total - agreement) / agreement * 100 : 0;
+    final double perSqft = area > 0 ? total / area : 0.0;
+    final double extras = agreement > 0 ? (total - agreement) / agreement * 100 : 0.0;
 
     return Scaffold(
       appBar: AppBar(title: const Text('FlatCheck'), centerTitle: true),
